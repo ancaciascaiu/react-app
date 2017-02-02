@@ -1,35 +1,36 @@
-import React from 'react'
+import React, { Component } from 'react';
+import City from './City'
 
-class Home extends React.Component {
-	state = {cities: []}
+class Home extends Component {
+  state = {cities: []}
 
-	constructor(){
-		super()
-		this.state = {
-			cities: []
-		}
-	}
+  async componentDidMount() {
+    const response = await fetch('https://cl-react.herokuapp.com/cities')
+    const cities   = await response.json()
 
-	async componentDidMount(){
-		console.log('running componentDidMount')
+    this.setState({cities: cities})
+  }
 
-		const results = await fetch('https://cl-react.herokuapp.com/cities')
-		const cities = await results.json()
+  childHighlighted = ()=> {
+  	console.log("called from child")
+  }
 
-		this.setState({cities: cities})
-	}
+  render() {
+    return (
+      <div>
+        <h3>You highlighted --- </h3>
 
-	render(){
-		return(
-			<div>
-				{this.state.cities.map( city => {
-					return <div key={city.name}> city is {city.name}</div>
-				})}
-
-			</div>
-			)
-	}
+        {this.state.cities.map( city => {
+          return <City 
+          	key={city.name} 
+          	name={city.name} 
+          	population={city.population} 
+          	onHighlight={this.childHighlighted}
+          	/>
+        })}
+      </div>
+    );
+  }
 }
 
-
-export default Home
+export default Home;
